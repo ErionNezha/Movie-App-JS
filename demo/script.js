@@ -15,10 +15,22 @@ searchBox.addEventListener("keyup", () => {
         }
     });
 
+// Fallback lokal: shfaqet nese API e TMDB deshton (p.sh. pa internet).
+const FALLBACK = [
+    {original_title:"Filmi Shembull 1", vote_average:8.5, overview:"Pershkrim shembull per demo.", poster_path:null},
+    {original_title:"Filmi Shembull 2", vote_average:7.9, overview:"Pershkrim shembull per demo.", poster_path:null},
+    {original_title:"Filmi Shembull 3", vote_average:9.1, overview:"Pershkrim shembull per demo.", poster_path:null},
+    {original_title:"Filmi Shembull 4", vote_average:7.2, overview:"Pershkrim shembull per demo.", poster_path:null},
+    {original_title:"Filmi Shembull 5", vote_average:8.8, overview:"Pershkrim shembull per demo.", poster_path:null},
+    {original_title:"Filmi Shembull 6", vote_average:8.1, overview:"Pershkrim shembull per demo.", poster_path:null}
+];
 const getMovies = async(api) => {
-    const response = await fetch(api);
-    const data = await response.json();
-    showMovies(data.results);
+    try {
+        const response = await fetch(api);
+        const data = await response.json();
+        if (data && data.results && data.results.length) { showMovies(data.results); return; }
+    } catch(e) { /* bie ne fallback */ }
+    showMovies(FALLBACK);
 }
 const showMovies = (data) => {
     movieBox.innerHTML = "";
@@ -28,7 +40,7 @@ const showMovies = (data) => {
         const box = document.createElement("div");
         box.classList.add("card");
         box.innerHTML = `
-        <img src="${API.img + item.poster_path}" alt="">
+        <img src="${item.poster_path ? API.img + item.poster_path : "john.jpg"}" alt="">
         <div class="details">
             <h1 class="movieName">${item.original_title}</h1>
             <span>${item.vote_average}</span>
